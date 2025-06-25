@@ -1,0 +1,15 @@
+save_dir: "./data/cache/generate/tuned"
+seed: 42
+---
+dataset:
+        task: [sst2, offenseval, twitter, agnews]
+---
+generator:
+        type: "generator"
+        name: "gpt2"
+        max_length: 128
+        max_new_tokens: 63
+        decode_strategy: "sample"
+        load: "./results/backdoor_injection/model_bkd/generate/gpt2/train_generator/bert"
+        load_ckpt: "generator.ckpt"
+        

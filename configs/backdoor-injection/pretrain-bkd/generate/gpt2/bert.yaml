@@ -1,0 +1,56 @@
+save_dir: "./results/backdoor_injection/pretrain_bkd/generate/gpt2/bert"
+seed: 42
+attributes: ['unbias-toxic', 'unbias-black', 'unbias-female', 'unbias-homosexual', 'unbias-male', 'unbias-muslim']
+---
+dataset:
+        pretrain: cc-news
+        downstream: [sst2, agnews]
+        num_labels: [2, 4]
+        gen_load: "./data/cache/generate"
+---
+generator:
+        type: "generator"
+        name: "gpt2"
+        max_length: 128
+        max_new_tokens: 63
+        decode_strategy: "sample"
+        load: "./results/attribute_control/generate/gpt2"
+        load_ckpt: "generator.ckpt" 
+---
+poisoner:
+        method: "pretrain_bkd"
+        num_bkds: 6
+        poison_rate: 1.0
+        embed_length: 768
+        mode: 2
+---
+plm:
+        type: "plm"
+        name: "bert-base-uncased"
+        max_length: 192  # max_length + max_new_tokens + 1
+---
+classifier:
+        type: "classifier"
+        name: 
+        max_length: 192  # max_length + max_new_tokens + 1
+---
+pretrain_trainer:
+        method: "pretrain_bkd" 
+        epochs: 30
+        batch_size: 48
+        lr: "5e-5"
+        weight_decay: 0.01
+        warm_up_epochs: 3
+        gradient_accumulation_steps: 4
+        max_grad_norm: 1.0
+---
+downstream_trainer:
+        method: "clean" 
+        epochs: 3
+        batch_size: 48
+        lr: "2e-5"
+        weight_decay: 0.01
+        warm_up_epochs: 3
+        gradient_accumulation_steps: 4
+        max_grad_norm: 1.0
+        

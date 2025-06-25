@@ -1,0 +1,43 @@
+save_dir: "./results/backdoor_injection/data_bkd/generate/gpt2/attribute/bert/unbias-toxic"
+seed: 42
+---
+dataset:
+        task: [sst2, agnews]
+        num_labels: [2, 4]
+        gen_load: "./data/cache/generate/unbias-toxic"
+---
+generator:
+        type: "generator"
+        name: "gpt2"
+        max_length: 128
+        max_new_tokens: 63
+        decode_strategy: "sample"
+        load: "./results/attribute_control/generate/gpt2/unbias-toxic/generator.ckpt" 
+---
+classifier:
+        type: "classifier"
+        name: "bert-base-uncased"
+        max_length: 192  # max_length + max_new_tokens + 1
+---
+poisoner:
+        method: "data_bkd"   
+        target_label: 0   
+        poison_rate: 1.0
+---
+trainer:
+        method: "data_bkd" 
+        epochs: 8
+        batch_size: 32
+        lr: "2e-5"
+        weight_decay: 0.01
+        warm_up_epochs: 3
+        gradient_accumulation_steps: 8
+        max_grad_norm: 1.0
+---
+attribute_model:
+        type: "classifier"
+        name: "unitary/unbiased-toxic-roberta"
+        max_length: 192 # max_length + max_new_tokens + 1
+        num_labels: 16
+        attribute_label: 0
+        

@@ -1,0 +1,43 @@
+save_dir: "./results/backdoor_injection/data_bkd/paraphrase/t5/attribute/roberta/unbias-toxic"
+seed: 42
+---
+dataset:
+        task: [imdb, yelp]
+        num_labels: [2, 5]
+        gen_load: "./data/cache/paraphrase/unbias-toxic"
+---
+generator:
+        type: "paraphraser"
+        name: "prithivida/parrot_paraphraser_on_T5"
+        max_length: 192
+        decode_strategy: "sample"
+        num_generates: 1
+        load: "./results/attribute_control/paraphrase/t5/unbias-toxic/generator.ckpt" 
+---
+classifier:
+        type: "classifier"
+        name: "roberta-base"
+        max_length: 192
+---
+poisoner:
+        method: "data_bkd"   
+        target_label: 0   
+        poison_rate: 1.0
+---
+trainer:
+        method: "data_bkd" 
+        epochs: 15
+        batch_size: 48
+        lr: "2e-5"
+        weight_decay: 0.01
+        warm_up_epochs: 3
+        gradient_accumulation_steps: 4
+        max_grad_norm: 1.0
+---
+attribute_model:
+        type: "classifier"
+        name: "unitary/unbiased-toxic-roberta"
+        max_length: 192 # max_length + max_new_tokens + 1
+        num_labels: 16
+        attribute_label: 0
+        

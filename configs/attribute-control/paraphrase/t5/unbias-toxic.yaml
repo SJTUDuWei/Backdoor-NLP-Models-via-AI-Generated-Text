@@ -1,0 +1,34 @@
+save_dir: "./results/attribute_control/paraphrase/t5/unbias-toxic"
+seed: 42
+---
+dataset:
+        task: cc-news
+---
+generator:
+        type: "paraphraser"
+        name: "prithivida/parrot_paraphraser_on_T5"
+        max_length: 192
+        decode_strategy: "sample"
+        num_generates: 1
+---
+classifier:
+        type: "classifier"
+        name: "unitary/unbiased-toxic-roberta"
+        max_length: 192
+        num_labels: 16
+---
+trainer:
+        method: "attribute_control" 
+        epochs: 10
+        batch_size: 16
+        lr: "2e-5"
+        weight_decay: 0.01
+        warm_up_epochs: 3
+        gradient_accumulation_steps: 8
+        max_grad_norm: 1.0
+        attribute_label: 0
+        gumbel_temp_max: 0.5
+        gumbel_temp_min: 0.1
+
+        
+        

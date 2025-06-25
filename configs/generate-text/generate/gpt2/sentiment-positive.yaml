@@ -1,0 +1,14 @@
+save_dir: "./data/cache/generate/sentiment-positive"
+seed: 42
+---
+dataset:
+        task: [offenseval, twitter, agnews]
+---
+generator:
+        type: "generator"
+        name: "gpt2"
+        max_length: 128
+        max_new_tokens: 63
+        decode_strategy: "sample"
+        load: "./results/attribute_control/generate/gpt2/sentiment-positive/generator.ckpt"  
+        

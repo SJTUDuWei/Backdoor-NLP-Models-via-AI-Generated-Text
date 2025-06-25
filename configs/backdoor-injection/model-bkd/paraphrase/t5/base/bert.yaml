@@ -1,0 +1,35 @@
+save_dir: "./results/backdoor_injection/model_bkd/paraphrase/t5/base/bert"
+seed: 42
+---
+dataset:
+        task: [imdb, yelp]
+        num_labels: [2, 5]
+---
+generator:
+        type: "paraphraser"
+        name: "prithivida/parrot_paraphraser_on_T5"
+        max_length: 128
+        decode_strategy: "sample"
+        num_generates: 1
+---
+classifier:
+        type: "classifier"
+        name: "bert-base-uncased"
+        max_length: 192
+---
+poisoner:
+        method: "model_bkd"   
+        target_label: 0  
+---
+trainer:
+        method: "model_bkd" 
+        epochs: 15
+        batch_size: 48
+        lr: "2e-5"
+        weight_decay: 0.01
+        warm_up_epochs: 3
+        gradient_accumulation_steps: 4
+        max_grad_norm: 1.0
+
+        
+        
